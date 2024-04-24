@@ -93,6 +93,26 @@ export default function Home() {
     refetch();
   }, [place, refetch]);
 
+  useEffect(() => {
+    const originalStyle = window.getComputedStyle(document.body).overflow;
+    if (isModalOpen) {
+      const scrollbarWidth =
+        window.innerWidth - document.documentElement.clientWidth;
+      document.body.style.overflow = "hidden";
+      if (scrollbarWidth) {
+        document.body.style.paddingRight = `${scrollbarWidth}px`;
+      }
+    } else {
+      document.body.style.overflow = originalStyle;
+      document.body.style.paddingRight = "0";
+    }
+
+    return () => {
+      document.body.style.overflow = originalStyle;
+      document.body.style.paddingRight = "0";
+    };
+  }, [isModalOpen]);
+
   const firstData = data?.list[0];
 
   const uniqueDates = [
@@ -103,7 +123,6 @@ export default function Home() {
     ),
   ];
 
-  // Filtering data to get the first entry after 6 AM for each unique date
   const firstDataForEachDate = uniqueDates.map((date) => {
     return data?.list.find((entry) => {
       const entryDate = new Date(entry.dt * 1000).toISOString().split("T")[0];
