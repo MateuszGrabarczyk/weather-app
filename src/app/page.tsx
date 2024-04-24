@@ -5,6 +5,7 @@ import { useQuery } from "react-query";
 import axios from "axios";
 import { format, fromUnixTime, parseISO } from "date-fns";
 import WeatherIcon from "@/components/WeatherIcon";
+import Modal from "@/components/Modal";
 import { getDayOrNightIcon } from "@/utils/getDayOrNightIcon";
 import Container from "@/components/Container";
 import { convertKelvinToCelsius } from "@/utils/convertKelvinToCelsius";
@@ -14,7 +15,7 @@ import { convertWindSpeed } from "@/utils/convertWindSpeed";
 import ForecastWeatherDetail from "@/components/ForecastWeatherDetail";
 import { useAtom } from "jotai";
 import { placeAtom } from "./atom";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 interface WeatherDetail {
   dt: number;
@@ -73,6 +74,10 @@ interface WeatherData {
 
 export default function Home() {
   const [place, setPlace] = useAtom(placeAtom);
+  const [isModalOpen, setModalOpen] = useState(false);
+
+  const openModal = () => setModalOpen(true);
+  const closeModal = () => setModalOpen(false);
 
   const { isLoading, error, data, refetch } = useQuery<WeatherData>(
     "repoData",
@@ -198,7 +203,7 @@ export default function Home() {
             </Container>
           </div>
         </section>
-        <section className="flex w-full flex-col gap-4  ">
+        <section className="flex w-full flex-col gap-4">
           <p className="text-2xl">Forcast (7 days)</p>
           {firstDataForEachDate.map((d, i) => (
             <ForecastWeatherDetail
@@ -225,6 +230,17 @@ export default function Home() {
               windSpeed={`${convertWindSpeed(d?.wind.speed ?? 1.64)} `}
             />
           ))}
+        </section>
+        <section className="flex w-full flex-col items-center gap-4">
+          <h1
+            className="font-bold text-center text-blue-500 hover:text-blue-600
+          transition-colors duration-300 cursor-pointer shadow-lg py-4 px-8 rounded-lg bg-gray-100"
+            title="Just fill a form and give us your honest opinion"
+            onClick={openModal}
+          >
+            Any suggestion? Give us an opinion!
+          </h1>
+          <Modal isOpen={isModalOpen} onClose={closeModal}></Modal>
         </section>
       </main>
     </div>
