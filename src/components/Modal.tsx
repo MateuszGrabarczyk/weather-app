@@ -1,18 +1,19 @@
 import { useState, FC, FormEvent } from "react";
-import { MdClose } from "react-icons/md";
 
 interface ModalProps {
   isOpen: boolean;
   onClose: () => void;
+  setShowToast: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-const Modal: FC<ModalProps> = ({ isOpen, onClose }) => {
+const Modal: FC<ModalProps> = ({ isOpen, onClose, setShowToast }) => {
   const [inputText, setInputText] = useState("");
 
   const handleSubmit = (event: FormEvent) => {
     event.preventDefault();
     console.log("Submitted Text: ", inputText);
     setInputText("");
+    setShowToast(true);
     onClose();
   };
 
