@@ -75,6 +75,7 @@ interface WeatherData {
 export default function Home() {
   const [place, setPlace] = useAtom(placeAtom);
   const [isModalOpen, setModalOpen] = useState(false);
+  const [showToast, setShowToast] = useState(false);
 
   const openModal = () => setModalOpen(true);
   const closeModal = () => setModalOpen(false);
@@ -112,6 +113,14 @@ export default function Home() {
       document.body.style.paddingRight = "0";
     };
   }, [isModalOpen]);
+
+  useEffect(() => {
+    let timer: NodeJS.Timeout;
+    if (showToast) {
+      timer = setTimeout(() => setShowToast(false), 3000);
+    }
+    return () => clearTimeout(timer);
+  }, [showToast]);
 
   const firstData = data?.list[0];
 
@@ -259,7 +268,16 @@ export default function Home() {
           >
             Any suggestion? Give us an opinion!
           </h1>
-          <Modal isOpen={isModalOpen} onClose={closeModal}></Modal>
+          <Modal
+            isOpen={isModalOpen}
+            onClose={closeModal}
+            setShowToast={setShowToast}
+          ></Modal>
+          {showToast && (
+            <div className="fixed bottom-10 right-10 bg-blue-600 text-white py-3 px-6 rounded-lg shadow-lg z-50">
+              Opinion submitted!
+            </div>
+          )}
         </section>
       </main>
     </div>
